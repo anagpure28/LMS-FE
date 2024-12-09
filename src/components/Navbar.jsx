@@ -25,6 +25,7 @@ import {
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { Separator } from "@radix-ui/react-dropdown-menu";
+import { Link } from "react-router-dom";
 
 const Navbar = () => {
   const user = true;
@@ -53,15 +54,9 @@ const Navbar = () => {
                 <DropdownMenuLabel>My Account</DropdownMenuLabel>
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
-                  <DropdownMenuItem className="cursor-pointer">
-                    My learning
-                  </DropdownMenuItem>
-                  <DropdownMenuItem className="cursor-pointer">
-                    Edit Profile
-                  </DropdownMenuItem>
-                  <DropdownMenuItem className="cursor-pointer">
-                    Log out
-                  </DropdownMenuItem>
+                  <DropdownMenuItem className="cursor-pointer"><Link to="my-learning">My Learning</Link></DropdownMenuItem>
+                  <DropdownMenuItem className="cursor-pointer"><Link to="profile">Edit Profile</Link></DropdownMenuItem>
+                  <DropdownMenuItem className="cursor-pointer">Log out</DropdownMenuItem>
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem className="cursor-pointer">
@@ -111,14 +106,14 @@ const MobileNavbar = () => {
         </SheetHeader>
         <Separator />
         <nav className="flex flex-col space-y-4">
-          <span>My Learning</span>
-          <span>Edit Profile</span>
-          <p>Log out</p>
+          <span className="cursor-pointer"><Link to="my-learning">My Learning</Link></span>
+          <span className="cursor-pointer"><Link to="profile">Edit Profile</Link></span>
+          <p className="cursor-pointer">Log out</p>
         </nav>
         {role === "instructor" && (
           <SheetFooter>
             <SheetClose asChild>
-              <Button type="submit">Dashboard</Button>
+              <Button className="cursor-pointer" type="submit">Dashboard</Button>
             </SheetClose>
           </SheetFooter>
         )}
