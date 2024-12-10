@@ -6,7 +6,7 @@ import NextJS from "../../assets/images/NextJs.jpg";
 
 const Course = () => {
   return (
-    <Card className="overflow-hidden rounded-xl dark:bg-gray-800 bg-white shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
+    <Card className="overflow-hidden rounded-xl dark:bg-gray-800 shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
       <div className="relative">
         <img
           src={NextJS}

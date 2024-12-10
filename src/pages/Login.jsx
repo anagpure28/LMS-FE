@@ -31,6 +31,7 @@ const Login = () => {
     password: "",
   });
 
+  // When post method is used in RTK query, we use [] for mutation
   const [
     registerUser,
     {
@@ -70,17 +71,17 @@ const Login = () => {
 
   useEffect(() => {
     if(registerIsSucess && registerData){
-      toast.success(registerData.message || "Account Created Successfully")
+      toast.success(registerData.message || "Signup successful.")
     }
     if(registerError){
-      toast.success(registerData.error || "Registration failed")
+      toast.error(registerError.data.message || "Signup Failed");
     }
     if(loginIsSucess && loginData){
-      toast.success(loginData.message || "Login Successful")
-      navigate('/');
+      toast.success(loginData.message || "Login successful.");
+      navigate("/");
     }
-    if(loginError){
-      toast.success(loginData.error || "Login failed")
+    if(loginError){ 
+      toast.error(loginError.data.message || "login Failed");
     }
   }, [
     loginData,
@@ -93,7 +94,7 @@ const Login = () => {
 
   return (
     <div className="flex items-center w-full justify-center" style={{marginTop: '8rem'}}>
-      <Tabs defaultValue="signup" className="w-[400px]">
+      <Tabs defaultValue="login" className="w-[400px]">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="signup">Signup</TabsTrigger>
           <TabsTrigger value="login">Login</TabsTrigger>
