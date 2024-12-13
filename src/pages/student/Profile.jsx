@@ -25,6 +25,7 @@ import { toast } from "sonner";
 const Profile = () => {
   const [name, setName] = useState("");
   const [profilePhoto, setProfilePhoto] = useState("");
+  const [dailogOpen, setDailogOpen] = useState(false);
 
   // When we use get method in RTK query, we use {} method
   const { data, isLoading, refetch } = useLoadUserQuery();
@@ -42,7 +43,7 @@ const Profile = () => {
   // Initialize states with user data when it's available
   useEffect(() => {
     if (data?.user) {
-      setName(data.user.name || "");
+      setName(data.user?.name || "");
       setProfilePhoto(null); // Keep profilePhoto empty initially
     }
   }, [data]);
@@ -62,19 +63,20 @@ const Profile = () => {
     await updateUser(formData);
   };
 
-  useEffect(() => {
-    refetch();
-  },[])
+  // useEffect(() => {
+  //   refetch();
+  // },[])
 
   useEffect(()=> {
     if(isSuccess) {
       refetch();
+      setDailogOpen(false);
       toast.success(updateUserData?.message || "Profile updated successfully.")
     }
     if(isError) {
       toast.error(updateUserData?.message || "Error occurred while updating profile.")
     }
-  },[isSuccess, isError, error, updateUserData])
+  },[isSuccess, isError, updateUserData, refetch]);
 
   // Early return for loading or error states
   if (isLoading) return <ProfileSkeleton />;
@@ -122,7 +124,7 @@ const Profile = () => {
               </span>
             </h1>
           </div>
-          <Dialog>
+          <Dialog open={dailogOpen} onOpenChange={setDailogOpen}>
             <DialogTrigger asChild>
               <Button size="sm" className="mt-2">
                 Edit Profile
@@ -158,18 +160,16 @@ const Profile = () => {
                 </div>
               </div>
               <DialogFooter>
-                <DialogClose asChild>
                   <Button disabled={updateUserIsLoading} onClick={updateUserHandler}>
-                    {isLoading ? (
+                    {updateUserIsLoading ? (
                       <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        <Loader2 className="h-4 w-4 animate-spin" />
                         Please wait
                       </>
                     ) : (
                       "Save Changes"
                     )}
-                  </Button>
-                  </DialogClose>
+                  </Button> 
               </DialogFooter>
             </DialogContent>
           </Dialog>
