@@ -76,7 +76,7 @@ const Profile = () => {
     if(isError) {
       toast.error(updateUserData?.message || "Error occurred while updating profile.")
     }
-  },[isSuccess, isError, updateUserData, refetch]);
+  },[isSuccess, isError, updateUserData, error, refetch]);
 
   // Early return for loading or error states
   if (isLoading) return <ProfileSkeleton />;
@@ -120,7 +120,7 @@ const Profile = () => {
             <h1 className="font-semibold text-gray-900 dark:text-gray-100">
               Role:
               <span className="font-normal text-gray-700 dark:text-gray-300 ml-2">
-                {user?.role.toUpperCase()}
+                {user?.role}
               </span>
             </h1>
           </div>

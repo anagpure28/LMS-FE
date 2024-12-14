@@ -149,8 +149,8 @@ const Login = () => {
               >
                 {registerIsLoading ? (
                   <>
-                    <Loader2 className="mr-2 h-2 w-4 animate-spin" /> Please
-                    wait...
+                    <Loader2 className="h-2 w-4 animate-spin" />Please
+                    wait
                   </>
                 ) : (
                   "Signup"
@@ -198,8 +198,8 @@ const Login = () => {
               >
                 {loginIsLoading ? (
                   <>
-                    <Loader2 className="mr-2 h-2 w-4 animate-spin" /> Please
-                    wait...
+                    <Loader2 className="h-2 w-4 animate-spin" />Please
+                    wait
                   </>
                 ) : (
                   "Login"

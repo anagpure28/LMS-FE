@@ -18,9 +18,12 @@ import {
 } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+
+import { toast } from "sonner";
+import { useEditCourseMutation, useGetCourseByIdQuery } from "@/features/api/CourseApi";
 
 const CourseTab = () => {
   const [input, setInput] = useState({
@@ -32,8 +35,30 @@ const CourseTab = () => {
     coursePrice: "",
     courseThumbnail: "",
   });
+  const params = useParams();
+  const courseId = params.courseId;
+  const {data:courseByIdData, isLoading:courseByIdLoading} = useGetCourseByIdQuery(courseId);
+  
+  useEffect(() => {
+    if (courseByIdData?.course) { 
+        const course = courseByIdData?.course;
+      setInput({
+        courseTitle: course.courseTitle,
+        subTitle: course.subTitle,
+        description: course.description,
+        category: course.category,
+        courseLevel: course.courseLevel,
+        coursePrice: course.coursePrice,
+        courseThumbnail: "",
+      });
+    }
+  }, [courseByIdData]);
+  
   const [previewThumbnail, setPreviewThumbnail] = useState("");
   const navigate = useNavigate();
+
+  const [editCourse, { data, isLoading, isSuccess, error }] =
+    useEditCourseMutation();
 
   const changeEventHandler = (e) => {
     const { name, value } = e.target;
@@ -58,12 +83,62 @@ const CourseTab = () => {
     }
   };
 
-  const updateCourseHandler = () => {
-    console.log(input)
-  }
+  const updateCourseHandler = async () => {
+    const formData = new FormData();
+    formData.append("courseTitle", input.courseTitle);
+    formData.append("subTitle", input.subTitle);
+    formData.append("description", input.description);
+    formData.append("category", input.category);
+    formData.append("courseLevel", input.courseLevel);
+    formData.append("coursePrice", input.coursePrice);
+    formData.append("courseThumbnail", input.courseThumbnail);
+    // console.log('courseId80',courseId)
+    await editCourse({ formData, courseId });
+  };
+
+  // const updateCourseHandler = async () => {
+  //   try {
+  //     const formData = new FormData();
+  //     formData.append("courseTitle", input.courseTitle);
+  //     formData.append("subTitle", input.subTitle);
+  //     formData.append("description", input.description);
+  //     formData.append("category", input.category);
+  //     formData.append("courseLevel", input.courseLevel);
+  //     formData.append("coursePrice", input.coursePrice);
+  //     formData.append("courseThumbnail", input.courseThumbnail);
+
+  //     console.log("FormData entries:");
+  //     for (const [key, value] of formData.entries()) {
+  //       console.log(key, value);
+  //     }
+
+  //     const response = await editCourse({ formData, courseId });
+  //     console.log("API Response:", response);
+  //   } catch (error) {
+  //     console.error("Error in updateCourseHandler:", error);
+  //     toast.error("Something went wrong. Please try again.");
+  //   }
+  // };
+
+  useEffect(() => {
+    if (isSuccess) {
+      toast.success(data?.message || "Course updated successfully");
+    }
+    if (error) {
+      toast.error(error?.data?.message || "Failed to update course");
+    }
+  }, [isSuccess, error]);
+  // useEffect(() => {
+  //     if (isSuccess || error) {
+  //       toast[isSuccess ? 'success' : 'error'](
+  //         isSuccess ? data?.message || 'Course updated successfully' : error?.data?.message || 'Failed to update course'
+  //       );
+  //     }
+  //   }, [isSuccess, error, data]);
+
+  if(courseByIdLoading) return <Loader2 className="h-4 w-4 animate-spin" />
 
   const isPublished = false;
-  const isLoading = false;
 
   return (
     <Card>
@@ -165,7 +240,7 @@ const CourseTab = () => {
                 name="coursePrice"
                 value={input.coursePrice}
                 onChange={changeEventHandler}
-                placeholder="199"
+                placeholder="99"
                 className="w-fit"
               />
             </div>
@@ -181,17 +256,16 @@ const CourseTab = () => {
             {previewThumbnail && (
               <img
                 src={previewThumbnail}
-                className="w-70 my-2"
+                className="w-64 my-2"
                 alt="Course Thumbnail"
               />
             )}
           </div>
-          <div>
-            <Button variant="outline" onClick={() => navigate("/admin/course")}>Cancel</Button>
-            <Button
-              disabled={isLoading}
-              onClick={updateCourseHandler}
-            >
+          <div className="flex items-center gap-3 py-3">
+            <Button variant="outline" onClick={() => navigate("/admin/course")}>
+              Cancel
+            </Button>
+            <Button disabled={isLoading} onClick={updateCourseHandler}>
               {isLoading ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin" />

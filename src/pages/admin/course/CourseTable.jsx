@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import React, {useEffect} from "react";
+import React from "react";
 import {
   Table,
   TableBody,
@@ -21,9 +21,9 @@ const CourseTable = () => {
 
   if(isLoading) return <h1>Loading...</h1>
 
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  },[])
+//   useEffect(() => {
+//     window.scrollTo(0, 0);
+//   },[])
 
   return (
     <div>
