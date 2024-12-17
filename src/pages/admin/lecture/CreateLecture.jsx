@@ -1,20 +1,49 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  useCreateLectureMutation,
+  useGetCourseLectureQuery,
+} from "@/features/api/CourseApi";
 import { Loader2 } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "sonner";
+import Lecture from "./Lecture";
+import ErrorBoundary from "./ErrorBoundary";
 
 const CreateLecture = () => {
-  const isLoading = false;
   const [lectureTitle, setLectureTitle] = useState("");
   const params = useParams();
   const courseId = params.courseId;
+//   console.log(courseId)
   const navigate = useNavigate();
 
-  const createLectureHandler = () => {
-    
-  }
+  const [createLecture, { data, isLoading, error, isSuccess }] =
+    useCreateLectureMutation();
+
+  const {
+    data: lectureData,
+    isLoading: lectureIsLoading,
+    isError: lectureIsError,
+    refetch
+  } = useGetCourseLectureQuery(courseId);
+
+  const createLectureHandler = async () => {
+    await createLecture({ lectureTitle, courseId });
+  };
+
+  useEffect(() => {
+    if (isSuccess) {
+      refetch()
+      toast.success(data.message || "Lecture has been created successfully");
+    }
+    if (error) {
+      toast.error(error.data.message || "Failed to create Lecture");
+    }
+  }, [isSuccess, error]);
+
+//   console.log(lectureData);
 
   return (
     <div className="flex-1 mx-10">
@@ -38,7 +67,10 @@ const CreateLecture = () => {
           />
         </div>
         <div className="flex items-center gap-3 py-3">
-          <Button variant="outline" onClick={() => navigate(`/admin/course/${courseId}`)}>
+          <Button
+            variant="outline"
+            onClick={() => navigate(`/admin/course/${courseId}`)}
+          >
             Back to course
           </Button>
           <Button disabled={isLoading} onClick={createLectureHandler}>
@@ -50,6 +82,21 @@ const CreateLecture = () => {
               "Create Lecture"
             )}
           </Button>
+        </div>
+        <div className="mt-10">
+        <ErrorBoundary>
+          {lectureIsLoading ? (
+            <p>Loading lectures...</p>
+          ) : lectureIsError ? (
+            <p>Failed to load lectures.</p>
+          ) : lectureData.lectures.length === 0 ? (
+            <p>No lectures available</p>
+          ) : (
+            lectureData?.lectures?.map((el, i)=> {
+                return <Lecture key={i} lecture={el} courseId={courseId} index={i} />
+            })
+          )}
+          </ErrorBoundary>
         </div>
       </div>
     </div>
