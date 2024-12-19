@@ -35,7 +35,8 @@ const CreateLecture = () => {
 
   useEffect(() => {
     if (isSuccess) {
-      refetch()
+      refetch();
+      setLectureTitle('');
       toast.success(data.message || "Lecture has been created successfully");
     }
     if (error) {
